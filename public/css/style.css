@@ -139,34 +139,47 @@ input, select, textarea {
 
 .auth-logo {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 10px;
   margin-bottom: 4px;
 }
 
 .auth-logo .mark {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  background: var(--brand-1);
+  width: 92px;
+  height: 92px;
+  border-radius: 20px;
+  background: #ffffff;
+  border: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
-  font-size: 20px;
+  overflow: hidden;
   flex: none;
 }
 
-.auth-logo h1 {
-  font-size: 19px;
-  margin: 0;
-  letter-spacing: 0.2px;
+.auth-logo .mark img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .auth-sub {
   color: var(--text-secondary);
   font-size: 13px;
   margin: 0 0 24px;
+  text-align: center;
 }
 
 .field {
@@ -315,15 +328,21 @@ input, select, textarea {
 }
 
 .sidebar-brand .mark {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.15);
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  background: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 17px;
+  overflow: hidden;
   flex: none;
+}
+
+.sidebar-brand .mark img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .sidebar-brand strong {

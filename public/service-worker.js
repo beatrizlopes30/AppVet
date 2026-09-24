@@ -1,4 +1,4 @@
-const CACHE_NAME = 'appvet-equino-v1';
+const CACHE_NAME = 'appvet-equino-v2';
 const APP_SHELL = [
   './',
   'index.html',
@@ -14,7 +14,7 @@ const APP_SHELL = [
   'js/protocols.js',
   'js/dashboard.js',
   'js/app.js',
-  'icons/icon.svg'
+  'icons/logo.png'
 ];
 
 self.addEventListener('install', (event) => {
