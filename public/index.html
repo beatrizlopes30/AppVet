@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>APPVET EQUINO</title>
 <meta name="description" content="Aplicativo para gestao do controle parasitario em equinos">
 <meta name="theme-color" content="#1f6f4a">
@@ -71,6 +71,8 @@
 
 <!-- ================= APP SHELL ================= -->
 <div id="screen-app" class="app-shell hidden">
+
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-brand">
@@ -212,7 +214,9 @@
             <span class="item"><span class="swatch" style="background:var(--series-opg)"></span> OPG registrado</span>
             <span class="item"><span class="swatch" style="background:var(--series-limit)"></span> Limite configurado</span>
           </div>
-          <canvas id="opg-chart" height="110"></canvas>
+          <div class="opg-chart-container">
+            <canvas id="opg-chart"></canvas>
+          </div>
           <p class="opg-scale-note">Valores em ovos por grama de fezes (OPG), ordenados cronologicamente por data de exame.</p>
         </div>
       </div>

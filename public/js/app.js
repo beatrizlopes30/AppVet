@@ -21,9 +21,24 @@ function switchView(view) {
   document.getElementById('view-title').textContent = meta.title;
   document.getElementById('view-subtitle').textContent = meta.subtitle;
 
-  document.getElementById('sidebar').classList.remove('open');
+  closeSidebar();
 
   if (view === 'opg') renderOpgViewAll();
+}
+
+function openSidebar() {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sidebar-overlay').classList.add('visible');
+}
+
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('visible');
+}
+
+function toggleSidebar() {
+  const isOpen = document.getElementById('sidebar').classList.contains('open');
+  if (isOpen) closeSidebar(); else openSidebar();
 }
 
 function renderAll() {
@@ -44,8 +59,10 @@ function initNav() {
     btn.addEventListener('click', () => switchView(btn.dataset.view));
   });
   document.getElementById('btn-logout').addEventListener('click', logout);
-  document.getElementById('btn-mobile-nav').addEventListener('click', () => {
-    document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('btn-mobile-nav').addEventListener('click', toggleSidebar);
+  document.getElementById('sidebar-overlay').addEventListener('click', closeSidebar);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeSidebar();
   });
 }
 

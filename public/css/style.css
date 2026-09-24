@@ -81,6 +81,7 @@ html, body {
   margin: 0;
   padding: 0;
   height: 100%;
+  max-width: 100%;
 }
 
 body {
@@ -88,7 +89,10 @@ body {
   background: var(--surface-0);
   color: var(--text-primary);
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
+
+img, svg, canvas { max-width: 100%; }
 
 a { color: inherit; }
 
@@ -108,10 +112,11 @@ input, select, textarea {
 
 .auth-wrap {
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
+  padding: 24px 16px;
   background:
     radial-gradient(circle at 20% 20%, var(--brand-soft), transparent 55%),
     var(--surface-0);
@@ -125,6 +130,11 @@ input, select, textarea {
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   padding: 32px;
+}
+
+@media (max-width: 420px) {
+  .auth-card { padding: 22px 18px; }
+  .auth-logo h1 { font-size: 17px; }
 }
 
 .auth-logo {
@@ -278,15 +288,23 @@ input, select, textarea {
   display: grid;
   grid-template-columns: 220px 1fr;
   min-height: 100vh;
+  min-height: 100dvh;
 }
 
 .sidebar {
   background: var(--brand-2);
   color: white;
   padding: 18px 12px;
+  padding-top: max(18px, env(safe-area-inset-top));
+  padding-left: max(12px, env(safe-area-inset-left));
   display: flex;
   flex-direction: column;
   gap: 4px;
+  overflow-y: auto;
+}
+
+.sidebar-overlay {
+  display: none;
 }
 
 .sidebar-brand {
@@ -324,6 +342,7 @@ input, select, textarea {
   align-items: center;
   gap: 10px;
   padding: 9px 10px;
+  min-height: 40px;
   border-radius: 8px;
   color: rgba(255, 255, 255, 0.82);
   background: transparent;
@@ -331,6 +350,7 @@ input, select, textarea {
   text-align: left;
   font-size: 13.5px;
   width: 100%;
+  flex: none;
 }
 
 .nav-item .ico { width: 18px; text-align: center; font-size: 15px; flex: none; }
@@ -378,8 +398,10 @@ input, select, textarea {
 
 .main {
   padding: 22px 28px 60px;
+  padding-right: max(28px, env(safe-area-inset-right));
   max-width: 1180px;
   width: 100%;
+  min-width: 0;
 }
 
 .topbar {
@@ -388,11 +410,13 @@ input, select, textarea {
   justify-content: space-between;
   margin-bottom: 20px;
   gap: 16px;
+  flex-wrap: wrap;
 }
 
 .topbar h2 {
   margin: 0;
   font-size: 20px;
+  overflow-wrap: anywhere;
 }
 
 .topbar p {
@@ -406,8 +430,10 @@ input, select, textarea {
   background: var(--surface-2);
   border: 1px solid var(--border-strong);
   border-radius: 8px;
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
+  font-size: 16px;
+  flex: none;
 }
 
 .view { display: none; }
@@ -417,7 +443,7 @@ input, select, textarea {
 
 .stat-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 14px;
   margin-bottom: 22px;
 }
@@ -512,7 +538,13 @@ input, select, textarea {
 
 /* ---------- Tables ---------- */
 
-.table-wrap { overflow-x: auto; }
+.table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 0 -1px;
+}
+
+.table-wrap table { min-width: 640px; }
 
 table {
   width: 100%;
@@ -554,7 +586,7 @@ tbody tr:hover { background: var(--surface-1); }
 .badge.crit { background: rgba(208, 59, 59, 0.12); color: var(--critical); }
 .badge.muted { background: var(--border); color: var(--text-secondary); }
 
-.row-actions { display: flex; gap: 6px; }
+.row-actions { display: flex; gap: 6px; flex-wrap: wrap; }
 
 /* ---------- Horse cards (grid) ---------- */
 
@@ -605,6 +637,7 @@ tbody tr:hover { background: var(--surface-1); }
   align-items: flex-start;
   justify-content: center;
   padding: 40px 16px;
+  padding-bottom: max(40px, env(safe-area-inset-bottom));
   overflow-y: auto;
   z-index: 100;
 }
@@ -616,6 +649,11 @@ tbody tr:hover { background: var(--surface-1); }
   max-width: 520px;
   padding: 22px;
   box-shadow: var(--shadow);
+}
+
+@media (max-width: 480px) {
+  .modal-backdrop { padding: 16px 10px; }
+  .modal { padding: 16px; border-radius: 8px; }
 }
 
 .modal-head {
@@ -654,6 +692,12 @@ tbody tr:hover { background: var(--surface-1); }
 
 .chart-legend .item { display: flex; align-items: center; gap: 6px; }
 .chart-legend .swatch { width: 12px; height: 3px; border-radius: 2px; }
+
+.opg-chart-container { position: relative; height: 280px; width: 100%; }
+
+@media (max-width: 640px) {
+  .opg-chart-container { height: 220px; }
+}
 
 .filters-row {
   display: flex;
@@ -698,34 +742,74 @@ tbody tr:hover { background: var(--surface-1); }
 
 /* ---------- Responsive ---------- */
 
-@media (max-width: 880px) {
-  .stat-grid { grid-template-columns: repeat(2, 1fr); }
+@media (max-width: 980px) {
   .two-col { grid-template-columns: 1fr; }
 }
 
-@media (max-width: 720px) {
+@media (max-width: 880px) {
   .app-shell { grid-template-columns: 1fr; }
 
   .sidebar {
     position: fixed;
-    inset: 0 30% 0 0;
-    z-index: 50;
-    transform: translateX(-105%);
-    transition: transform 0.2s ease;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: min(78vw, 280px);
+    z-index: 60;
+    transform: translateX(-100%);
+    transition: transform 0.22s ease;
     box-shadow: var(--shadow);
   }
 
   .sidebar.open { transform: translateX(0); }
 
+  .sidebar-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(11, 11, 11, 0.4);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.22s ease;
+    z-index: 55;
+  }
+
+  .sidebar-overlay.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
   .mobile-toggle { display: inline-flex; align-items: center; justify-content: center; }
 
-  .main { padding: 16px 16px 60px; }
+  .main {
+    padding: 16px 16px 60px;
+    padding-left: max(16px, env(safe-area-inset-left));
+    padding-right: max(16px, env(safe-area-inset-right));
+  }
 
-  .stat-grid { grid-template-columns: 1fr 1fr; }
-
-  .field-row { grid-template-columns: 1fr; }
+  .view-title-wrap { min-width: 0; }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 640px) {
+  .field-row { grid-template-columns: 1fr; }
+  .card { padding: 14px; }
+  .stat-card { padding: 13px; }
+  .stat-card .value { font-size: 24px; }
+}
+
+@media (max-width: 460px) {
+  .topbar h2 { font-size: 17px; }
+  .topbar p { font-size: 12px; }
+  .horse-grid { grid-template-columns: 1fr; }
+  .filters-row .field { min-width: 0; flex: 1 1 140px; }
+  .btn { padding: 9px 12px; }
+}
+
+@media (max-width: 340px) {
   .stat-grid { grid-template-columns: 1fr; }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .field input, .field select, .btn-sm { min-height: 38px; }
+  .field textarea { min-height: 64px; }
 }
