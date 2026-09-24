@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>APPVET EQUINO</title>
+<meta name="description" content="Aplicativo para gestao do controle parasitario em equinos">
+<meta name="theme-color" content="#1f6f4a">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/icon.svg">
+<link rel="stylesheet" href="css/style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+</head>
+<body>
+
+<!-- ================= AUTH SCREEN ================= -->
+<div id="screen-auth" class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="mark">🐴</div>
+      <h1>APPVET EQUINO</h1>
+    </div>
+    <p class="auth-sub">Gestão do controle parasitário em equinos</p>
+
+    <div id="auth-error" class="form-error hidden"></div>
+
+    <!-- Login form -->
+    <form id="form-login">
+      <div class="field">
+        <label for="login-email">E-mail</label>
+        <input id="login-email" type="email" autocomplete="username" required>
+      </div>
+      <div class="field">
+        <label for="login-password">Senha</label>
+        <input id="login-password" type="password" autocomplete="current-password" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Entrar</button>
+    </form>
+
+    <!-- Register form -->
+    <form id="form-register" class="hidden">
+      <div class="field">
+        <label for="reg-name">Nome completo</label>
+        <input id="reg-name" type="text" required>
+      </div>
+      <div class="field">
+        <label for="reg-crmv">CRMV (opcional)</label>
+        <input id="reg-crmv" type="text">
+      </div>
+      <div class="field">
+        <label for="reg-email">E-mail</label>
+        <input id="reg-email" type="email" autocomplete="username" required>
+      </div>
+      <div class="field">
+        <label for="reg-password">Senha</label>
+        <input id="reg-password" type="password" autocomplete="new-password" minlength="4" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Criar conta</button>
+    </form>
+
+    <div class="auth-switch">
+      <span id="auth-switch-login-hint">Ainda não tem conta?</span>
+      <button type="button" id="btn-show-register">Cadastre-se</button>
+      <button type="button" id="btn-show-login" class="hidden">Voltar para login</button>
+    </div>
+
+    <p class="auth-demo-hint">Dados salvos apenas neste navegador (localStorage).<br>Use "Carregar dados de demonstração" no menu de conta após entrar, se quiser exemplos prontos.</p>
+  </div>
+</div>
+
+<!-- ================= APP SHELL ================= -->
+<div id="screen-app" class="app-shell hidden">
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="mark">🐴</div>
+      <div>
+        <strong>APPVET EQUINO</strong>
+        <span>Controle parasitário</span>
+      </div>
+    </div>
+
+    <button class="nav-item active" data-view="dashboard">
+      <span class="ico">📊</span> Dashboard
+    </button>
+    <button class="nav-item" data-view="horses">
+      <span class="ico">🐎</span> Equinos
+    </button>
+    <button class="nav-item" data-view="records">
+      <span class="ico">🧪</span> Dados Clínicos
+    </button>
+    <button class="nav-item" data-view="opg">
+      <span class="ico">📈</span> Histórico de OPG
+    </button>
+    <button class="nav-item" data-view="alerts">
+      <span class="ico">🔔</span> Alertas
+      <span class="nav-badge hidden" id="nav-alert-badge">0</span>
+    </button>
+    <button class="nav-item" data-view="protocols">
+      <span class="ico">💊</span> Protocolos
+    </button>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <strong id="sidebar-user-name">—</strong>
+        <span id="sidebar-user-email">—</span>
+      </div>
+      <button id="btn-logout" class="nav-item"><span class="ico">↩️</span> Sair</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <button class="mobile-toggle" id="btn-mobile-nav">☰</button>
+        <div>
+          <h2 id="view-title">Dashboard</h2>
+          <p id="view-subtitle">Visão geral do controle parasitário</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ---------- DASHBOARD ---------- -->
+    <section class="view active" id="view-dashboard">
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="label">🐎 Equinos cadastrados</div>
+          <div class="value" id="stat-total-horses">0</div>
+        </div>
+        <div class="stat-card alert">
+          <div class="label">⏰ Vermifugações pendentes</div>
+          <div class="value" id="stat-pending-deworm">0</div>
+        </div>
+        <div class="stat-card alert">
+          <div class="label">🔴 Alertas de OPG</div>
+          <div class="value" id="stat-opg-alerts">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">💊 Protocolos ativos</div>
+          <div class="value" id="stat-active-protocols">0</div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="card-head"><h3>Alertas recentes</h3></div>
+          <div id="dashboard-alerts"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>Últimos registros de OPG</h3></div>
+          <div id="dashboard-recent-records"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- EQUINOS ---------- -->
+    <section class="view" id="view-horses">
+      <div class="card-head" style="margin-bottom:14px;">
+        <div></div>
+        <button class="btn btn-primary btn-sm" id="btn-new-horse">+ Novo equino</button>
+      </div>
+      <div class="horse-grid" id="horse-grid"></div>
+      <div class="empty-state hidden" id="horse-empty">Nenhum equino cadastrado ainda.</div>
+    </section>
+
+    <!-- ---------- DADOS CLÍNICOS ---------- -->
+    <section class="view" id="view-records">
+      <div class="card-head" style="margin-bottom:14px;">
+        <div></div>
+        <button class="btn btn-primary btn-sm" id="btn-new-record">+ Novo registro</button>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Equino</th><th>Data exame</th><th>OPG</th><th>Parasitas</th>
+                <th>Antiparasitário</th><th>Vermifugação</th><th></th>
+              </tr>
+            </thead>
+            <tbody id="records-tbody"></tbody>
+          </table>
+        </div>
+        <div class="empty-state hidden" id="records-empty">Nenhum registro clínico/parasitológico cadastrado.</div>
+      </div>
+    </section>
+
+    <!-- ---------- HISTÓRICO DE OPG ---------- -->
+    <section class="view" id="view-opg">
+      <div class="card">
+        <div class="filters-row">
+          <div class="field">
+            <label for="opg-filter-horse">Equino</label>
+            <select id="opg-filter-horse"></select>
+          </div>
+          <div class="field">
+            <label for="opg-filter-from">De</label>
+            <input type="date" id="opg-filter-from">
+          </div>
+          <div class="field">
+            <label for="opg-filter-to">Até</label>
+            <input type="date" id="opg-filter-to">
+          </div>
+          <button class="btn btn-secondary btn-sm" id="btn-opg-clear-filter">Limpar filtro</button>
+        </div>
+
+        <div id="opg-empty" class="empty-state hidden">Selecione um equino com registros de OPG para visualizar o histórico.</div>
+
+        <div id="opg-chart-wrap">
+          <div class="chart-legend">
+            <span class="item"><span class="swatch" style="background:var(--series-opg)"></span> OPG registrado</span>
+            <span class="item"><span class="swatch" style="background:var(--series-limit)"></span> Limite configurado</span>
+          </div>
+          <canvas id="opg-chart" height="110"></canvas>
+          <p class="opg-scale-note">Valores em ovos por grama de fezes (OPG), ordenados cronologicamente por data de exame.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>Registros cronológicos</h3></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Data</th><th>OPG</th><th>Situação</th><th>Parasitas</th></tr></thead>
+            <tbody id="opg-history-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- ALERTAS ---------- -->
+    <section class="view" id="view-alerts">
+      <div class="card">
+        <div class="card-head"><h3>Alertas automáticos</h3></div>
+        <p style="font-size:12.5px;color:var(--text-secondary);margin-top:-6px;">
+          Gerados a partir do limite de OPG e do intervalo de vermifugação configurados em cada equino.
+        </p>
+        <div id="alerts-list"></div>
+        <div class="empty-state hidden" id="alerts-empty">Nenhum alerta no momento. Tudo em dia!</div>
+      </div>
+    </section>
+
+    <!-- ---------- PROTOCOLOS ---------- -->
+    <section class="view" id="view-protocols">
+      <div class="card-head" style="margin-bottom:14px;">
+        <div></div>
+        <button class="btn btn-primary btn-sm" id="btn-new-protocol">+ Novo protocolo</button>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Equino</th><th>Tipo</th><th>Produto</th><th>Próxima aplicação</th><th>Status</th><th></th></tr>
+            </thead>
+            <tbody id="protocols-tbody"></tbody>
+          </table>
+        </div>
+        <div class="empty-state hidden" id="protocols-empty">Nenhum protocolo antiparasitário cadastrado.</div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<div id="modal-host"></div>
+<div id="toast-host"></div>
+
+<script src="js/storage.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/horses.js"></script>
+<script src="js/records.js"></script>
+<script src="js/opg.js"></script>
+<script src="js/alerts.js"></script>
+<script src="js/protocols.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

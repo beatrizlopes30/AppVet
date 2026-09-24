@@ -1,0 +1,12 @@
+{
+  "name": "APPVET EQUINO",
+  "short_name": "APPVET",
+  "description": "Aplicativo para gestão do controle parasitário em equinos",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#f9f9f7",
+  "theme_color": "#1f6f4a",
+  "icons": [
+    { "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
